@@ -5,4 +5,7 @@ TIMEOUT 50
 LABEL rocky
   MENU LABEL Install Rocky Linux 9.3 (PXE)
   KERNEL vmlinuz
-  APPEND initrd=initrd.img inst.repo=ftp://192.168.0.101/pub ks=ftp://192.168.0.101/pub/rockypxe.ks
+  APPEND initrd=initrd.img \
+         inst.repo=ftp://192.168.0.101/pub \
+         inst.ks=ftp://192.168.0.101/pub/rockypxe.ks \
+         ip=dhcp
