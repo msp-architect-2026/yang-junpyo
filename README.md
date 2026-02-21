@@ -72,6 +72,7 @@ Kubernetes 멀티 노드 클러스터 구성까지를 자동화 범위로 정의
 ---
 
 ## 5. 디렉토리 구조
+
 01-setting/        # 기본 시스템 설정
 02-k8s-control/    # Control Plane 구성
 03-k8s-compute/    # Worker 구성
