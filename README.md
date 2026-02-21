@@ -72,13 +72,13 @@ Kubernetes 멀티 노드 클러스터 구성까지를 자동화 범위로 정의
 ---
 
 ## 5. 디렉토리 구조
-01-setting/ # 기본 시스템 설정
-02-k8s-control/ # Control Plane 구성
-03-k8s-compute/ # Worker 구성
-04-storage/ # Storage 구성
-inventory/ # 노드 정의 및 변수 파일
-ansible-start.sh # Ansible 실행 스크립트
-pxe-start.sh # PXE 실행 스크립트
+01-setting/        # 기본 시스템 설정
+02-k8s-control/    # Control Plane 구성
+03-k8s-compute/    # Worker 구성
+04-storage/        # Storage 구성
+inventory/         # 노드 정의 및 변수 파일
+ansible-start.sh   # Ansible 실행 스크립트
+pxe-start.sh       # PXE 실행 스크립트
 
 플레이북과 템플릿을 단계별로 분리하여
 구성 변경 시 특정 영역만 수정 가능하도록 설계하였다.
