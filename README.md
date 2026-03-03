@@ -89,5 +89,35 @@ Show your appreciation to those who have contributed to the project.
 ## License
 For open source projects, say how it is licensed.
 
+## 🌿 Branch Strategy
+
+### Branch Structure
+
+- main      : 운영 안정 브랜치
+- dev       : 통합 개발 브랜치
+- feature/* : 기능 단위 작업
+- hotfix/*  : 긴급 수정
+
+### Workflow
+
+feature → dev → main
+
+- main 직접 push 금지
+- dev 직접 push 금지
+- Merge Request 필수
+
+### Commit Convention
+
+[type] scope: message
+
+Examples:
+[feat] storage: add dynamic provisioning role
+[fix] reset: handle iptables cleanup
+[refactor] playbook: reorder execution
+[docs] README: update branch strategy
+
+
+
+
 ## Project status
 If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
