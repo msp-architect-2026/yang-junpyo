@@ -1,0 +1,39 @@
+---
+- name: Get calico-node pods status
+  shell: kubectl -n kube-system get pods -l k8s-app=calico-node -o json
+  register: calico_pods
+  become: yes
+
+- name: Extract unhealthy calico pods
+  set_fact:
+    unhealthy_pods: "{{ calico_list | selectattr('status.phase', 'ne', 'Running') | map(attribute='metadata.name') | list }}"
+  vars:
+    calico_list: "{{ (calico_pods.stdout | from_json)['items'] }}"
+
+- name: Debug unhealthy pods
+  debug:
+    var: unhealthy_pods
+
+- name: Delete unhealthy calico pods
+  shell: kubectl -n kube-system delete pod {{ item }}
+  loop: "{{ unhealthy_pods }}"
+  when: unhealthy_pods | length > 0
+  become: yes
+
+- name: Wait for calico DaemonSet rollout
+  shell: kubectl -n kube-system rollout status ds/calico-node --timeout=120s
+  when: unhealthy_pods | length > 0
+  become: yes
+
+- name: Verify calico pods are healthy
+  shell: kubectl -n kube-system get pods -l k8s-app=calico-node --no-headers
+  register: final_status
+  become: yes
+
+- name: Fail if calico still unhealthy
+  fail:
+    msg: "Calico CNI is still unhealthy after recovery attempt"
+  when: >
+    final_status.stdout is search("CrashLoopBackOff") or
+    final_status.stdout is search("Error") or
+    final_status.stdout is search("0/1")

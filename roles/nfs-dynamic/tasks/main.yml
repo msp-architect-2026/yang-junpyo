@@ -1,0 +1,44 @@
+---
+# 1️⃣ Helm 설치
+- name: Install Helm
+  shell: curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+  args:
+    creates: /usr/local/bin/helm
+
+# 2️⃣ Helm repo 추가
+- name: Add NFS provisioner Helm repo
+  shell: helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+  register: helm_repo_add
+  changed_when: "'has been added' in helm_repo_add.stdout"
+
+# 3️⃣ Helm repo 업데이트
+- name: Update Helm repo
+  shell: helm repo update
+
+# 4️⃣ NFS Dynamic Provisioner 설치
+- name: Install NFS dynamic provisioner
+  shell: >
+    helm upgrade --install nfs-provisioner
+    nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
+    --set nfs.server=192.168.0.155
+    --set nfs.path=/nfs
+    --set storageClass.defaultClass=true
+
+# 5️⃣ PVC/Pod 매니페스트 복사
+- name: Copy PVC manifest
+  copy:
+    src: test-pvc.yaml
+    dest: /tmp/test-pvc.yaml
+
+- name: Copy Pod manifest
+  copy:
+    src: test-pod.yaml
+    dest: /tmp/test-pod.yaml
+
+# 6️⃣ PVC 적용
+- name: Apply test PVC
+  shell: kubectl apply -f /tmp/test-pvc.yaml
+
+# 7️⃣ Pod 적용
+- name: Apply test Pod
+  shell: kubectl apply -f /tmp/test-pod.yaml

@@ -1,0 +1,28 @@
+---
+- name: Install nfs-utils package
+  dnf:
+    name: nfs-utils
+    state: present
+
+- name: Create NFS shared directory
+  file:
+    path: /nfs
+    state: directory
+    owner: nobody
+    group: nobody
+    mode: '0777'
+
+- name: Configure /etc/exports
+  lineinfile:
+    path: /etc/exports
+    line: "/nfs *(rw,sync,no_subtree_check,no_root_squash)"
+    create: yes
+
+- name: Enable and start nfs-server
+  service:
+    name: nfs-server
+    state: started
+    enabled: yes
+
+- name: Apply NFS export configuration
+  command: exportfs -ra

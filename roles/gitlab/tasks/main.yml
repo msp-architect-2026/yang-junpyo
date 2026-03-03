@@ -1,0 +1,55 @@
+---
+# 1️⃣ Docker 설치
+- name: Install required packages
+  dnf:
+    name:
+      - dnf-utils
+      - device-mapper-persistent-data
+      - lvm2
+    state: present
+
+- name: Add Docker repository
+  shell: dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  args:
+    creates: /etc/yum.repos.d/docker-ce.repo
+
+- name: Install Docker
+  dnf:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: present
+
+- name: Start and enable Docker
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
+
+# 2️⃣ GitLab 디렉토리 생성
+- name: Create GitLab directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /srv/gitlab/config
+    - /srv/gitlab/logs
+    - /srv/gitlab/data
+
+# 3️⃣ GitLab 컨테이너 실행
+- name: Run GitLab container
+  shell: |
+    docker run --detach \
+      --hostname {{ gitlab_hostname }} \
+      --publish 443:443 --publish 80:80 --publish 2222:22 \
+      --name gitlab \
+      --restart always \
+      --volume /srv/gitlab/config:/etc/gitlab \
+      --volume /srv/gitlab/logs:/var/log/gitlab \
+      --volume /srv/gitlab/data:/var/opt/gitlab \
+      --shm-size 256m \
+      gitlab/gitlab-ce:latest
+  args:
+    creates: /srv/gitlab/config
