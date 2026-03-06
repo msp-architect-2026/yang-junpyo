@@ -38,7 +38,7 @@ alertmanager:
     - name: 'null'
     - name: 'slack-notifications'
       slack_configs:
-      - api_url: 'https://hooks.slack.com/services/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'
+      - api_url: '{{ slack_webhook_url }}'
         channel: '#qwe'
         send_resolved: true
         title: '{{ "{{" }} if eq .Status "firing" {{ "}}" }}🔴 [장애 발생] {{ "{{" }} .CommonLabels.alertname {{ "}}" }}{{ "{{" }} else {{ "}}" }}✅ [장애 해소] {{ "{{" }} .CommonLabels.alertname {{ "}}" }}{{ "{{" }} end {{ "}}" }}'
