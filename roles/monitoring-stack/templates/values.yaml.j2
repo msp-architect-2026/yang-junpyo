@@ -23,12 +23,12 @@ alertmanager:
         cpu: 50m
   config:
     global:
-      resolve_timeout: 5m
+      resolve_timeout: 1m
     route:
       group_by: ['alertname']
-      group_wait: 30s
-      group_interval: 5m
-      repeat_interval: 1h
+      group_wait: 1m
+      group_interval: 1m
+      repeat_interval: 1m
       receiver: 'slack-notifications'
       routes:
       - matchers:

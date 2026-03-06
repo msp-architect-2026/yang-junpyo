@@ -1,0 +1,5 @@
+---
+- name: Install nfs-utils on worker nodes
+  dnf:
+    name: nfs-utils
+    state: present

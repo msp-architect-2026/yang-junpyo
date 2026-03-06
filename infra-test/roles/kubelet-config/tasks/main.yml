@@ -1,0 +1,33 @@
+---
+- name: Ensure kubelet drop-in directory exists
+  file:
+    path: /etc/systemd/system/kubelet.service.d
+    state: directory
+    mode: '0755'
+
+- name: Set node IP fact (Control Plane uses ansible_host, Workers use default route)
+  set_fact:
+    kubelet_node_ip: >-
+      {{ ansible_host if 'k8s_control' in group_names else ansible_default_ipv4.address }}
+
+- name: Set node IP for kubelet (multi NIC support)
+  copy:
+    dest: /etc/systemd/system/kubelet.service.d/20-node-ip.conf
+    content: |
+      [Service]
+      Environment="KUBELET_EXTRA_ARGS=--node-ip={{ kubelet_node_ip }}"
+  notify: Restart kubelet
+
+# 🔹 join 이후에만 존재하는 파일이므로 존재 여부 먼저 확인
+- name: Check if kubeadm-flags.env exists
+  stat:
+    path: /var/lib/kubelet/kubeadm-flags.env
+  register: kubelet_flags
+
+- name: Ensure node-ip is set in kubeadm-flags.env (only if exists)
+  lineinfile:
+    path: /var/lib/kubelet/kubeadm-flags.env
+    regexp: '^KUBELET_KUBEADM_ARGS='
+    line: 'KUBELET_KUBEADM_ARGS="--container-runtime-endpoint=unix:///var/run/crio/crio.sock --pod-infra-container-image=registry.k8s.io/pause:3.9 --node-ip={{ kubelet_node_ip }}"'
+  when: kubelet_flags.stat.exists
+  notify: Restart kubelet

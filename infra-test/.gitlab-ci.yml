@@ -1,0 +1,35 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  IMAGE: 192.168.0.112:5050/root/infra-test
+
+build:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:v1.23.0-debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"192.168.0.112:5050\":{\"username\":\"${CI_REGISTRY_USER}\",\"password\":\"${CI_REGISTRY_PASSWORD}\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor
+        --context "${CI_PROJECT_DIR}/app"
+        --dockerfile "${CI_PROJECT_DIR}/app/Dockerfile"
+        --destination "${IMAGE}:${CI_COMMIT_SHORT_SHA}"
+        --destination "${IMAGE}:latest"
+        --insecure
+        --skip-tls-verify
+
+deploy:
+  stage: deploy
+  image: alpine/helm:3.14.0
+  before_script:
+    - mkdir -p ~/.kube
+    - echo "$KUBECONFIG_CONTENT" | base64 -d > ~/.kube/config
+  script:
+    - helm upgrade --install sample-app app/helm/sample-app
+        --set image.repository=${IMAGE}
+        --set image.tag=${CI_COMMIT_SHORT_SHA}
+  only:
+    - main

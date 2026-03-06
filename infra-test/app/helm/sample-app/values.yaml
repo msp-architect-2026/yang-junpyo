@@ -1,0 +1,16 @@
+replicaCount: 1
+
+image:
+  repository: 192.168.0.112:5050/root/infra-test
+  tag: latest
+  pullPolicy: Always
+
+imagePullSecrets:
+  - name: gitlab-registry-secret
+
+service:
+  type: NodePort
+  port: 80
+  nodePort: 30080
+
+resources: {}
