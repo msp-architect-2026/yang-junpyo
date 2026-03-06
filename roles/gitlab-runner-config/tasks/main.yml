@@ -1,0 +1,11 @@
+- name: Upgrade GitLab Runner with tags and HTTPS
+  command: >
+    helm upgrade gitlab-runner gitlab/gitlab-runner
+    -n gitlab-runner
+    --set gitlabUrl=https://{{ gitlab_ip }}
+    --set runnerToken={{ runner_token }}
+    --set rbac.create=true
+    --set runners.executor=kubernetes
+    --set runners.privileged=true
+    --set certsSecretName=gitlab-tls
+    --set "runners.tags=k8s\,build\,deploy"

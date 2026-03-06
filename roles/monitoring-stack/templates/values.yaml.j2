@@ -1,0 +1,54 @@
+# Prometheus 설정
+prometheus:
+  prometheusSpec:
+    retention: 7d
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 100m
+
+# Grafana 설정
+grafana:
+  adminPassword: "{{ grafana_admin_password | default('admin') }}"
+  service:
+    type: NodePort
+    nodePort: 30300
+
+# Alertmanager 설정
+alertmanager:
+  alertmanagerSpec:
+    resources:
+      requests:
+        memory: 128Mi
+        cpu: 50m
+  config:
+    global:
+      resolve_timeout: 5m
+    route:
+      group_by: ['alertname']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 1h
+      receiver: 'slack-notifications'
+      routes:
+      - matchers:
+        - alertname = "Watchdog"
+        receiver: "null"
+    receivers:
+    - name: 'null'
+    - name: 'slack-notifications'
+      slack_configs:
+      - api_url: 'https://hooks.slack.com/services/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'
+        channel: '#qwe'
+        send_resolved: true
+        title: '{{ "{{" }} if eq .Status "firing" {{ "}}" }}🔴 [장애 발생] {{ "{{" }} .CommonLabels.alertname {{ "}}" }}{{ "{{" }} else {{ "}}" }}✅ [장애 해소] {{ "{{" }} .CommonLabels.alertname {{ "}}" }}{{ "{{" }} end {{ "}}" }}'
+        text: |
+          {{ "{{-" }} range .Alerts {{ "}}" }}
+          *심각도:* {{ "{{" }} .Labels.severity {{ "}}" }}
+          *내용:* {{ "{{" }} .Annotations.summary {{ "}}" }}
+          *상세:* {{ "{{" }} .Annotations.description {{ "}}" }}
+          {{ "{{-" }} end {{ "}}" }}
+
+# Node Exporter 설정
+nodeExporter:
+  enabled: true

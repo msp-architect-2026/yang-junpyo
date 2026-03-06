@@ -1,0 +1,65 @@
+---
+# 1️⃣ Helm 설치
+- name: Check if helm is installed
+  shell: which helm
+  register: helm_check
+  ignore_errors: true
+  changed_when: false
+
+- name: Install Helm
+  shell: |
+    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+  when: helm_check.rc != 0
+
+# 2️⃣ monitoring 네임스페이스 생성
+- name: Create monitoring namespace
+  shell: kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f -
+  changed_when: false
+
+# 3️⃣ Helm repo 추가
+- name: Add prometheus helm repo
+  shell: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+  changed_when: false
+
+# 4️⃣ Helm repo 업데이트
+- name: Update helm repo
+  shell: helm repo update
+  changed_when: false
+
+# 5️⃣ values.yaml 템플릿 복사
+- name: Copy values.yaml template
+  template:
+    src: values.yaml.j2
+    dest: /tmp/monitoring-values.yaml
+
+# 6️⃣ kube-prometheus-stack 배포
+- name: Deploy kube-prometheus-stack
+  shell: |
+    helm upgrade --install monitoring prometheus-community/kube-prometheus-stack \
+      --namespace monitoring \
+      --values /tmp/monitoring-values.yaml \
+      --wait \
+      --timeout 10m
+  register: helm_result
+  changed_when: "'has been upgraded' in helm_result.stdout or 'has been deployed' in helm_result.stdout"
+
+# 7️⃣ 배포 확인
+- name: Verify monitoring pods
+  shell: kubectl get pods -n monitoring --field-selector=status.phase=Running | grep -v NAME | wc -l
+  register: pod_count
+  changed_when: false
+
+- name: Assert monitoring pods are running
+  assert:
+    that: pod_count.stdout | int >= 8
+    msg: "모니터링 Pod가 정상 실행되지 않았습니다."
+
+# 8️⃣ Grafana 비밀번호 출력
+- name: Get Grafana admin password
+  shell: kubectl get secret -n monitoring monitoring-grafana -o jsonpath='{.data.admin-password}' | base64 -d
+  register: grafana_password
+  changed_when: false
+
+- name: Show Grafana admin password
+  debug:
+    msg: "Grafana 관리자 비밀번호: {{ grafana_password.stdout }}"

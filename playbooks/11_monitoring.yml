@@ -1,0 +1,6 @@
+---
+- hosts: k8s_control
+  become: yes
+  roles:
+    - monitoring-stack
+    - monitoring-alerts

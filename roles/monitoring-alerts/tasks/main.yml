@@ -1,0 +1,45 @@
+---
+# 1️⃣ Alert 규칙 파일 복사
+- name: Copy alert rules manifest
+  copy:
+    dest: /tmp/custom-alerts.yml
+    content: |
+      apiVersion: monitoring.coreos.com/v1
+      kind: PrometheusRule
+      metadata:
+        name: custom-node-alerts
+        namespace: monitoring
+        labels:
+          release: monitoring
+      spec:
+        groups:
+        - name: node-alerts
+          rules:
+          - alert: NodeHighCPUUsage
+            expr: (100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100)) > 80
+            for: 2m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High CPU usage detected"
+              description: "Node CPU usage is above 80% for more than 2 minutes."
+          - alert: NodeHighMemoryUsage
+            expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+            for: 2m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High Memory usage detected"
+              description: "Node Memory usage is above 85% for more than 2 minutes."
+          - alert: PodCrashLooping
+            expr: rate(kube_pod_container_status_restarts_total[5m]) * 300 > 1
+            for: 5m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Pod is crash looping"
+              description: "Pod {% raw %}{{ $labels.pod }}{% endraw %} in namespace {% raw %}{{ $labels.namespace }}{% endraw %} is crash looping."
+
+# 2️⃣ Alert 규칙 적용
+- name: Apply custom alert rules
+  shell: kubectl apply -f /tmp/custom-alerts.yml

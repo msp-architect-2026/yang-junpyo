@@ -38,7 +38,14 @@
     - /srv/gitlab/logs
     - /srv/gitlab/data
 
-# 3️⃣ GitLab 컨테이너 실행
+# 3️⃣ GitLab 컨테이너 실행 여부 확인
+- name: Check if GitLab container exists
+  shell: docker ps -a --filter name=gitlab --format '{% raw %}{{.Names}}{% endraw %}' | grep -w gitlab
+  register: gitlab_container
+  ignore_errors: true
+  changed_when: false
+
+# 4️⃣ GitLab 컨테이너 실행
 - name: Run GitLab container
   shell: |
     docker run --detach \
@@ -51,5 +58,24 @@
       --volume /srv/gitlab/data:/var/opt/gitlab \
       --shm-size 256m \
       gitlab/gitlab-ce:latest
-  args:
-    creates: /srv/gitlab/config
+  when: gitlab_container.rc != 0
+
+# 5️⃣ GitLab healthy 상태 대기
+- name: Wait for GitLab to be healthy
+  shell: docker inspect --format '{% raw %}{{.State.Health.Status}}{% endraw %}' gitlab
+  register: gitlab_health
+  until: gitlab_health.stdout == "healthy"
+  retries: 30
+  delay: 10
+  changed_when: false
+
+# 6️⃣ 초기 비밀번호 출력
+- name: Get GitLab initial root password
+  shell: docker exec gitlab grep 'Password:' /etc/gitlab/initial_root_password
+  register: gitlab_password
+  ignore_errors: true
+  changed_when: false
+
+- name: Show GitLab initial root password
+  debug:
+    msg: "GitLab 초기 비밀번호: {{ gitlab_password.stdout }}"

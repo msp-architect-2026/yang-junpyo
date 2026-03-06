@@ -1,0 +1,14 @@
+- name: Check ingress-nginx namespace exists
+  command: kubectl get namespace ingress-nginx
+  register: ns_check
+  ignore_errors: yes
+  changed_when: false
+
+- name: Install Nginx Ingress Controller if not exists
+  command: >
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.12.1/deploy/static/provider/baremetal/deploy.yaml
+  when: ns_check.rc != 0
+
+- name: Wait for Ingress Controller pod to be ready
+  command: kubectl wait --for=condition=ready pod -l app.kubernetes.io/component=controller -n ingress-nginx --timeout=300s
+  when: ns_check.rc != 0

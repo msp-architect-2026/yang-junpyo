@@ -1,0 +1,10 @@
+- hosts: k8s_workers
+  become: yes
+  tasks:
+    - name: Copy GitLab certificate to worker nodes
+      copy:
+        src: /tmp/gitlab.local.crt
+        dest: /etc/pki/ca-trust/source/anchors/gitlab.local.crt
+
+    - name: Update CA trust
+      command: update-ca-trust

@@ -1,0 +1,63 @@
+- name: Create GitLab SSL directory
+  file:
+    path: /etc/gitlab/ssl
+    state: directory
+    mode: '0755'
+
+- name: Generate self-signed certificate with SAN
+  command: >
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048
+    -keyout /etc/gitlab/ssl/gitlab.local.key
+    -out /etc/gitlab/ssl/gitlab.local.crt
+    -subj "/CN={{ gitlab_ip }}"
+    -addext "subjectAltName=IP:{{ gitlab_ip }}"
+  args:
+    creates: /etc/gitlab/ssl/gitlab.local.crt
+
+- name: Copy certificate into GitLab container
+  command: docker cp /etc/gitlab/ssl/gitlab.local.crt gitlab:/etc/gitlab/ssl/gitlab.local.crt
+
+- name: Copy key into GitLab container
+  command: docker cp /etc/gitlab/ssl/gitlab.local.key gitlab:/etc/gitlab/ssl/gitlab.local.key
+
+- name: Set GitLab external_url to HTTPS
+  lineinfile:
+    path: /srv/gitlab/config/gitlab.rb
+    regexp: "^external_url"
+    line: "external_url 'https://{{ gitlab_ip }}'"
+
+- name: Set Registry external_url to HTTPS
+  lineinfile:
+    path: /srv/gitlab/config/gitlab.rb
+    regexp: "^registry_external_url"
+    line: "registry_external_url 'https://{{ gitlab_ip }}:5050'"
+
+- name: Set nginx ssl_certificate
+  lineinfile:
+    path: /srv/gitlab/config/gitlab.rb
+    regexp: "nginx\\['ssl_certificate'\\]"
+    line: "nginx['ssl_certificate'] = '/etc/gitlab/ssl/gitlab.local.crt'"
+
+- name: Set nginx ssl_certificate_key
+  lineinfile:
+    path: /srv/gitlab/config/gitlab.rb
+    regexp: "nginx\\['ssl_certificate_key'\\]"
+    line: "nginx['ssl_certificate_key'] = '/etc/gitlab/ssl/gitlab.local.key'"
+
+- name: Set registry_nginx ssl_certificate
+  lineinfile:
+    path: /srv/gitlab/config/gitlab.rb
+    regexp: "registry_nginx\\['ssl_certificate'\\]"
+    line: "registry_nginx['ssl_certificate'] = '/etc/gitlab/ssl/gitlab.local.crt'"
+
+- name: Set registry_nginx ssl_certificate_key
+  lineinfile:
+    path: /srv/gitlab/config/gitlab.rb
+    regexp: "registry_nginx\\['ssl_certificate_key'\\]"
+    line: "registry_nginx['ssl_certificate_key'] = '/etc/gitlab/ssl/gitlab.local.key'"
+
+- name: Run gitlab-ctl reconfigure
+  command: docker exec gitlab gitlab-ctl reconfigure
+
+- name: Restart gitlab nginx
+  command: docker exec gitlab gitlab-ctl restart nginx

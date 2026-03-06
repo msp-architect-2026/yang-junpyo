@@ -1,0 +1,21 @@
+- import_playbook: playbooks/01_prepare.yml
+- import_playbook: playbooks/02_worker_prepare.yml
+- import_playbook: playbooks/03_control_plane.yml
+- import_playbook: playbooks/04_worker_join.yml
+
+- import_playbook: playbooks/05_storage_server.yml
+- import_playbook: playbooks/06_nfs_client.yml
+- import_playbook: playbooks/07_storage_dynamic.yml
+
+- import_playbook: playbooks/08_gitlab_server.yml
+
+- import_playbook: playbooks/11_monitoring.yml
+- import_playbook: playbooks/11-1_monitoring-alerts.yml
+
+- import_playbook: playbooks/09_healthcheck.yml
+- import_playbook: playbooks/10_etcd_backup.yml
+- import_playbook: playbooks/12_argocd.yml
+- import_playbook: playbooks/13_ingress_nginx.yml
+- import_playbook: playbooks/14_gitlab_cert.yml
+- import_playbook: playbooks/15_gitlab_https.yml
+- import_playbook: playbooks/16_gitlab_runner_config.yml

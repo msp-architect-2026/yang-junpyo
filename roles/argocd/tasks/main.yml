@@ -1,0 +1,32 @@
+- name: Check argocd namespace exists
+  command: kubectl get namespace argocd
+  register: ns_check
+  ignore_errors: yes
+  changed_when: false
+
+- name: Create argocd namespace if not exists
+  command: kubectl create namespace argocd
+  when: ns_check.rc != 0
+
+- name: Install ArgoCD with server-side apply
+  command: >
+    kubectl apply -n argocd
+    -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+    --server-side
+  register: argocd_install
+
+- name: Wait for ArgoCD pods to be ready
+  command: kubectl wait --for=condition=ready pod --all -n argocd --timeout=300s
+  retries: 3
+  delay: 10
+
+- name: Check argocd-server service type
+  command: kubectl get svc argocd-server -n argocd -o jsonpath='{.spec.type}'
+  register: svc_type
+  changed_when: false
+
+- name: Expose ArgoCD server as NodePort if not already
+  command: >
+    kubectl patch svc argocd-server -n argocd
+    -p '{"spec": {"type": "NodePort"}}'
+  when: svc_type.stdout != "NodePort"
