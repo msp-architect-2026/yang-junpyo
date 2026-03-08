@@ -82,11 +82,11 @@ ansible-playbook -i ~/ansible-k8s/inventory/inventory.ini ~/ansible-k8s/install-
 | 문서 | 바로가기 |
 |------|---------|
 | 📖 Wiki 전체 문서 | [Wiki 이동](https://github.com/msp-architect-2026/yang-junpyo/wiki) |
-| 🖥️ PXE 기반 자동 OS 설치 | [Demo-PXE](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-PXE) |
-| ⚙️ Ansible 기반 Kubernetes 클러스터 자동화 | [Demo-Ansible](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-Ansible) |
-| 💾 NFS 스토리지 자동 구성 | [Demo-NFS-Storage](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-NFS-Storage) |
-| 🦊 GitLab CI/CD 파이프라인 | [Demo-GitLab-CICD](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-GitLab-CICD) |
-| 📊 모니터링 스택 | [Demo-Monitoring](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-Monitoring) |
-| 🔁 ArgoCD GitOps 자동 배포 | [Demo-ArgoCD](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-ArgoCD) |
-| 🌐 Ingress 기반 외부 서비스 접근 | [Demo-Ingress](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-Ingress) |
-| 🔄 Self-Healing 장애 복구 | [Demo-Self-Healing](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-Self-Healing) |
+| 🖥️ PXE 기반 자동 OS 설치 | [PXE](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-PXE) |
+| ⚙️ Ansible 기반 Kubernetes 클러스터 자동화 | [Ansible](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-Ansible) |
+| 💾 NFS 스토리지 자동 구성 | [NFS-Storage](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-NFS-Storage) |
+| 🦊 GitLab CI/CD 파이프라인 | [GitLab-CICD](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-GitLab-CICD) |
+| 📊 모니터링 스택 | [Monitoring](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-Monitoring) |
+| 🔁 ArgoCD GitOps 자동 배포 | [ArgoCD](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-ArgoCD) |
+| 🌐 Ingress 기반 외부 서비스 접근 | [Ingress](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-Ingress) |
+| 🔄 Self-Healing 장애 복구 | [Self-Healing](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-Self-Healing) |
