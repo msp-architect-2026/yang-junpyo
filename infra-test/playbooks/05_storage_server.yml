@@ -1,6 +1,0 @@
----
-- name: Setup NFS Storage Server
-  hosts: storageServers
-  become: yes
-  roles:
-    - nfs-server

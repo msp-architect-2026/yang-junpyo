@@ -1,8 +1,0 @@
----
-- name: CNI CrashLoop Auto Recovery
-  hosts: k8s_control
-  become: yes
-  gather_facts: no
-
-  roles:
-    - cni-healthcheck

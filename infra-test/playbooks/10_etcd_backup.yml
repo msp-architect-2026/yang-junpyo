@@ -1,8 +1,0 @@
----
-- name: Etcd Snapshot Backup (On-Demand)
-  hosts: k8s_control
-  become: yes
-  gather_facts: yes
-
-  roles:
-    - etcd-backup

@@ -1,6 +1,0 @@
----
-- name: Setup NFS Dynamic Provisioner
-  hosts: k8s_control
-  become: yes
-  roles:
-    - nfs-dynamic
