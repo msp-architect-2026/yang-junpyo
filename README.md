@@ -1,123 +1,92 @@
-# infra-test
+# MSP Architect 2026
+On-Premise Kubernetes Automation Platform
 
+## ▍프로젝트 개요
 
+VM 전원 인가부터 Kubernetes 클러스터 구축, CI/CD, 모니터링까지  
+전체 인프라 플랫폼을 자동화한 온프레미스 Kubernetes 운영 환경입니다.
 
-## Getting started
+PXE 네트워크 부팅을 통해 Rocky Linux를 자동 설치하고,  
+Ansible 단일 명령어로 전체 플랫폼이 자동 구성됩니다.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+---
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## ▍핵심 기능
 
-## Add your files
+- 🖥️ **PXE 자동 OS 설치** — VM 전원 인가 후 수동 개입 없이 Rocky Linux 9.3 자동 설치
+- ⚙️ **Ansible 원클릭 자동화** — 단일 명령어로 전체 플랫폼 자동 구축
+- ☸️ **Kubernetes 클러스터 자동 구성** — kubeadm 기반 멀티 노드 클러스터 자동 구성
+- 💾 **NFS Dynamic Storage** — PVC 요청 시 PV 동적 프로비저닝 자동화
+- 🦊 **GitLab CI/CD** — HTTPS 기반 파이프라인 자동 실행 및 Kubernetes 자동 배포
+- 🔁 **ArgoCD GitOps** — 코드 변경 시 자동 배포 반영
+- 📊 **모니터링 스택** — Prometheus + Grafana + Alertmanager Slack 연동
 
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+---
 
+## ▍전체 자동화 흐름
 ```
-cd existing_repo
-git remote add origin http://192.168.0.112/root/infra-test.git
-git branch -M main
-git push -uf origin main
+PXE 부팅
+  → Rocky Linux 자동 설치 (Kickstart)
+    → Ansible 플랫폼 자동 구성
+      → Kubernetes Cluster (kubeadm)
+        → NFS Dynamic Storage
+          → GitLab CI/CD (HTTPS)
+            → Helm 배포
+              → ArgoCD GitOps 자동 배포
+                → Ingress Controller (Nginx)
+                  → Prometheus + Grafana + Alertmanager
 ```
 
-## Integrate with your tools
+---
 
-* [Set up project integrations](http://192.168.0.112/root/infra-test/-/settings/integrations)
+## ▍아키텍처
 
-## Collaborate with your team
+### PXE 자동 설치 아키텍처
+<!-- 아키텍처 사진 추가 예정 -->
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+### Ansible 플랫폼 자동화 아키텍처
+<!-- 아키텍처 사진 추가 예정 -->
 
-## Test and Deploy
+---
 
-Use the built-in continuous integration in GitLab.
+## ▍인프라 구성
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+| 노드 | 역할 | IP |
+|------|------|----|
+| pxe-ansible | PXE 서버 + Ansible 실행 서버 | 192.168.0.101 |
+| k8s-control-1 | Kubernetes Control Plane | 192.168.0.120 |
+| k8s-worker-1 | Kubernetes Worker 노드 | 192.168.2.130 |
+| k8s-worker-2 | Kubernetes Worker 노드 | 192.168.2.131 |
+| k8s-worker-3 | Kubernetes Worker 노드 | 192.168.2.134 |
+| k8s-worker-4 | Kubernetes Worker 노드 | 192.168.2.140 |
+| k8s-storage-1 | NFS Storage 서버 | 192.168.0.155 |
+| gitlab-server | GitLab 서버 (Docker) | 192.168.0.112 |
 
-***
+---
 
-# Editing this README
+## ▍Quick Start
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+전체 설치 및 검증 절차는 **[Wiki](https://github.com/msp-architect-2026/yang-junpyo/wiki)** 에 상세히 정리되어 있습니다.
+```bash
+# 1. Ansible 인벤토리 설정
+vi ~/ansible-k8s/inventory/inventory.ini
 
-## Suggestions for a good README
+# 2. 원클릭 전체 플랫폼 자동 구축
+ansible-playbook -i ~/ansible-k8s/inventory/inventory.ini ~/ansible-k8s/install-platform.yml
+```
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+---
 
-## Name
-Choose a self-explaining name for your project.
+## ▍문서 안내
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## 🌿 Branch Strategy
-
-### Branch Structure
-
-- main      : 운영 안정 브랜치
-- dev       : 통합 개발 브랜치
-- feature/* : 기능 단위 작업
-- hotfix/*  : 긴급 수정
-
-### Workflow
-
-feature → dev → main
-
-- main 직접 push 금지
-- dev 직접 push 금지
-- Merge Request 필수
-
-### Commit Convention
-
-[type] scope: message
-
-Examples:
-[feat] storage: add dynamic provisioning role
-[fix] reset: handle iptables cleanup
-[refactor] playbook: reorder execution
-[docs] README: update branch strategy
-
-
-
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+| 문서 | 바로가기 |
+|------|---------|
+| 📖 Wiki 전체 문서 | [Wiki 이동](https://github.com/msp-architect-2026/yang-junpyo/wiki) |
+| 🖥️ PXE 기반 자동 OS 설치 | [Demo-PXE](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-PXE) |
+| ⚙️ Ansible 기반 Kubernetes 클러스터 자동화 | [Demo-Ansible](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-Ansible) |
+| 💾 NFS 스토리지 자동 구성 | [Demo-NFS-Storage](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-NFS-Storage) |
+| 🦊 GitLab CI/CD 파이프라인 | [Demo-GitLab-CICD](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-GitLab-CICD) |
+| 📊 모니터링 스택 | [Demo-Monitoring](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-Monitoring) |
+| 🔁 ArgoCD GitOps 자동 배포 | [Demo-ArgoCD](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-ArgoCD) |
+| 🌐 Ingress 기반 외부 서비스 접근 | [Demo-Ingress](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-Ingress) |
+| 🔄 Self-Healing 장애 복구 | [Demo-Self-Healing](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-Self-Healing) |
