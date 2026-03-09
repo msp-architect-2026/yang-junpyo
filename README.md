@@ -88,4 +88,4 @@ ansible-playbook -i ~/ansible-k8s/inventory/inventory.ini ~/ansible-k8s/install-
 | 문서 | 바로가기 |
 |------|---------|
 | 📖 Wiki 전체 문서 | [Wiki 이동](https://github.com/msp-architect-2026/yang-junpyo/wiki) |
-| 🎬 플랫폼 기능 시연 및 증빙 | [Demo-Videos](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-Videos) |
+| 🎬 플랫폼 기능 시연 및 증빙 | [Videos](https://github.com/msp-architect-2026/yang-junpyo/wiki/Videos) |
