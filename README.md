@@ -1,25 +1,47 @@
 # MSP Architect 2026
 On-Premise Kubernetes Automation Platform
 
-## ▍프로젝트 개요
+---
 
-VM 전원 인가부터 Kubernetes 클러스터 구축, CI/CD, 모니터링까지  
-전체 인프라 플랫폼을 자동화한 온프레미스 Kubernetes 운영 환경입니다.
+## ▍시나리오
 
-PXE 네트워크 부팅을 통해 Rocky Linux를 자동 설치하고,  
-Ansible 단일 명령어로 전체 플랫폼이 자동 구성됩니다.
+Kubernetes 클러스터를 운영하다 보면 노드 교체, 테스트 환경 재구성, 장애 복구 상황이 반복적으로 발생한다.
+그때마다 OS 설치부터 패키지 구성, 보안 설정, 클러스터 조인까지 수작업으로 처리해야 했고
+작업자마다 환경이 달라지는 문제가 생겼다.
+
+단순히 빠른 설치가 아니라, **누가 작업하든 동일한 환경이 재현되는 구조**가 필요했다.
+
+**MSP Architect 2026**은 VM 전원 인가 순간부터 Kubernetes 클러스터, CI/CD, 모니터링, GitOps, 장애 자동복구까지
+전체 인프라를 코드로 정의하고 자동화한 온프레미스 플랫폼입니다.
 
 ---
 
 ## ▍핵심 기능
 
-- 🖥️ **PXE 자동 OS 설치** — VM 전원 인가 후 수동 개입 없이 Rocky Linux 9.3 자동 설치
-- ⚙️ **Ansible 원클릭 자동화** — 단일 명령어로 전체 플랫폼 자동 구축
-- ☸️ **Kubernetes 클러스터 자동 구성** — kubeadm 기반 멀티 노드 클러스터 자동 구성
+- 🖥️ **PXE 자동 OS 설치** — VM 전원 인가만으로 Rocky Linux 9.3 자동 설치
+- ⚙️ **Ansible 원클릭 자동화** — 단일 명령어로 7대 노드 전체 플랫폼 자동 구축
+- ☸️ **Kubernetes 클러스터** — kubeadm 기반 멀티 노드 클러스터 자동 구성
 - 💾 **NFS Dynamic Storage** — PVC 요청 시 PV 동적 프로비저닝 자동화
-- 🦊 **GitLab CI/CD** — HTTPS 기반 파이프라인 자동 실행 및 Kubernetes 자동 배포
-- 🔁 **ArgoCD GitOps** — 코드 변경 시 자동 배포 반영
-- 📊 **모니터링 스택** — Prometheus + Grafana + Alertmanager Slack 연동
+- 🦊 **GitLab CI/CD** — 코드 Push만으로 빌드부터 Kubernetes 자동 배포
+- 🔁 **ArgoCD GitOps** — Git 변경사항 자동 감지 및 클러스터 자동 동기화
+- 📊 **모니터링 스택** — Prometheus + Grafana + Alertmanager Slack 실시간 알림
+- 🔄 **Self-Healing** — CNI 장애, 노드 이탈 등 장애 상황 자동 복구
+
+---
+
+## ▍아키텍처
+
+### PXE 자동 설치 아키텍처
+<!-- 이미지 삽입 -->
+
+### Ansible 플랫폼 자동화 아키텍처
+<!-- 이미지 삽입 -->
+
+### 클러스터 운영 통합 아키텍처
+<!-- 이미지 삽입 -->
+
+### 전체 인프라 아키텍처
+<!-- 이미지 삽입 -->
 
 ---
 
@@ -27,25 +49,16 @@ Ansible 단일 명령어로 전체 플랫폼이 자동 구성됩니다.
 ```
 PXE 부팅
   → Rocky Linux 자동 설치 (Kickstart)
-    → Ansible 플랫폼 자동 구성
+    → Ansible 플랫폼 자동 구성 (install-platform.yml)
       → Kubernetes Cluster (kubeadm)
         → NFS Dynamic Storage
           → GitLab CI/CD (HTTPS)
             → Helm 배포
               → ArgoCD GitOps 자동 배포
                 → Ingress Controller (Nginx)
-                  → Prometheus + Grafana + Alertmanager
+                  → Prometheus + Grafana + Alertmanager (Slack 연동)
+                    → Self-Healing 자동 복구
 ```
-
----
-
-## ▍아키텍처
-
-### PXE 자동 설치 아키텍처
-<!-- 아키텍처 사진 추가 예정 -->
-
-### Ansible 플랫폼 자동화 아키텍처
-<!-- 아키텍처 사진 추가 예정 -->
 
 ---
 
@@ -55,25 +68,18 @@ PXE 부팅
 |------|------|----|
 | pxe-ansible | PXE 서버 + Ansible 실행 서버 | 192.168.0.101 |
 | k8s-control-1 | Kubernetes Control Plane | 192.168.0.120 |
-| k8s-worker-1 | Kubernetes Worker 노드 | 192.168.2.130 |
-| k8s-worker-2 | Kubernetes Worker 노드 | 192.168.2.131 |
-| k8s-worker-3 | Kubernetes Worker 노드 | 192.168.2.134 |
-| k8s-worker-4 | Kubernetes Worker 노드 | 192.168.2.140 |
+| k8s-worker-1~4 | Kubernetes Worker 노드 | 192.168.0.118 / 181 / 166 / 156 |
 | k8s-storage-1 | NFS Storage 서버 | 192.168.0.155 |
 | gitlab-server | GitLab 서버 (Docker) | 192.168.0.112 |
 
 ---
 
 ## ▍Quick Start
-
-전체 설치 및 검증 절차는 **[Wiki](https://github.com/msp-architect-2026/yang-junpyo/wiki)** 에 상세히 정리되어 있습니다.
 ```bash
-# 1. Ansible 인벤토리 설정
-vi ~/ansible-k8s/inventory/inventory.ini
-
-# 2. 원클릭 전체 플랫폼 자동 구축
 ansible-playbook -i ~/ansible-k8s/inventory/inventory.ini ~/ansible-k8s/install-platform.yml
 ```
+
+전체 설치 및 검증 절차 → **[Wiki](https://github.com/msp-architect-2026/yang-junpyo/wiki)**
 
 ---
 
@@ -83,10 +89,10 @@ ansible-playbook -i ~/ansible-k8s/inventory/inventory.ini ~/ansible-k8s/install-
 |------|---------|
 | 📖 Wiki 전체 문서 | [Wiki 이동](https://github.com/msp-architect-2026/yang-junpyo/wiki) |
 | 🖥️ PXE 기반 자동 OS 설치 | [PXE](https://github.com/msp-architect-2026/yang-junpyo/wiki/PXE) |
-| ⚙️ Ansible 기반 Kubernetes 클러스터 자동화 | [Ansible](https://github.com/msp-architect-2026/yang-junpyo/wiki/Ansible) |
+| ⚙️ Ansible 클러스터 자동화 | [Ansible](https://github.com/msp-architect-2026/yang-junpyo/wiki/Ansible) |
 | 💾 NFS 스토리지 자동 구성 | [NFS-Storage](https://github.com/msp-architect-2026/yang-junpyo/wiki/NFS-Storage) |
 | 🦊 GitLab CI/CD 파이프라인 | [GitLab-CICD](https://github.com/msp-architect-2026/yang-junpyo/wiki/GitLab-CICD) |
 | 📊 모니터링 스택 | [Monitoring](https://github.com/msp-architect-2026/yang-junpyo/wiki/Monitoring) |
 | 🔁 ArgoCD GitOps 자동 배포 | [ArgoCD](https://github.com/msp-architect-2026/yang-junpyo/wiki/ArgoCD) |
-| 🌐 Ingress 기반 외부 서비스 접근 | [Ingress](https://github.com/msp-architect-2026/yang-junpyo/wiki/Ingress) |
 | 🔄 Self-Healing 장애 복구 | [Self-Healing](https://github.com/msp-architect-2026/yang-junpyo/wiki/Self-Healing) |
+| 🎬 플랫폼 기능 시연 영상 | [Demo-Videos](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-Videos) |
