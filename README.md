@@ -88,11 +88,4 @@ ansible-playbook -i ~/ansible-k8s/inventory/inventory.ini ~/ansible-k8s/install-
 | 문서 | 바로가기 |
 |------|---------|
 | 📖 Wiki 전체 문서 | [Wiki 이동](https://github.com/msp-architect-2026/yang-junpyo/wiki) |
-| 🖥️ PXE 기반 자동 OS 설치 | [PXE](https://github.com/msp-architect-2026/yang-junpyo/wiki/PXE) |
-| ⚙️ Ansible 클러스터 자동화 | [Ansible](https://github.com/msp-architect-2026/yang-junpyo/wiki/Ansible) |
-| 💾 NFS 스토리지 자동 구성 | [NFS-Storage](https://github.com/msp-architect-2026/yang-junpyo/wiki/NFS-Storage) |
-| 🦊 GitLab CI/CD 파이프라인 | [GitLab-CICD](https://github.com/msp-architect-2026/yang-junpyo/wiki/GitLab-CICD) |
-| 📊 모니터링 스택 | [Monitoring](https://github.com/msp-architect-2026/yang-junpyo/wiki/Monitoring) |
-| 🔁 ArgoCD GitOps 자동 배포 | [ArgoCD](https://github.com/msp-architect-2026/yang-junpyo/wiki/ArgoCD) |
-| 🔄 Self-Healing 장애 복구 | [Self-Healing](https://github.com/msp-architect-2026/yang-junpyo/wiki/Self-Healing) |
-| 🎬 플랫폼 기능 시연 영상 | [Demo-Videos](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-Videos) |
+| 🎬 플랫폼 기능 시연 및 증빙 | [Demo-Videos](https://github.com/msp-architect-2026/yang-junpyo/wiki/Demo-Videos) |
