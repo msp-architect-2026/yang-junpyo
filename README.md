@@ -1,5 +1,4 @@
-# MSP Architect 2026
-On-Premise Kubernetes Automation Platform
+#온프레미스 Kubernetes 인프라 자동화 플랫폼
 
 ---
 
