@@ -69,7 +69,7 @@ PXE 부팅
 |------|------|----|
 | pxe-ansible | PXE 서버 + Ansible 실행 서버 | 192.168.0.101 |
 | k8s-control-1 | Kubernetes Control Plane | 192.168.0.120 |
-| k8s-worker-1~5 | Kubernetes Worker 노드 | 192.168.0.118 / 181 / 166 / 156 / 180 |
+| k8s-worker-1~4 | Kubernetes Worker 노드 | 192.168.0.118 / 181 / 166 / 156 |
 | k8s-storage-1 | NFS Storage 서버 | 192.168.0.155 |
 | gitlab-server | GitLab 서버 (Docker) | 192.168.0.112 |
 
