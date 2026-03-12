@@ -80,5 +80,5 @@ PXE 부팅
 ansible-playbook ~/ansible-k8s/install-platform.yml
 ```
 전체 설치 및 검증 절차 → **[Wiki](https://github.com/msp-architect-2026/yang-junpyo/wiki)**  
-플랫폼 기능 시연 및 증빙 → **[Verification](https://github.com/msp-architect-2026/yang-junpyo/wiki/Verification)**
+플랫폼 기능 시연 및 증빙 → **[Verification](https://github.com/msp-architect-2026/yang-junpyo/wiki/Verification)**  
 프로젝트 진행 현황 및 이슈 관리 → **[Project Board](https://github.com/orgs/msp-architect-2026/projects/36)**
