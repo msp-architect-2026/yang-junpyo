@@ -75,6 +75,17 @@ PXE 부팅
 
 ---
 
+## ▍성능 지표
+| 항목 | Before | After |
+|------|--------|-------|
+| 노드 1대 환경 구성 | 1~2시간 수작업 | 7대 동시 35분 자동 구축 |
+| Self-Healing 복구 | 수동 확인 후 복구 | 40초 이내 자동 복구 |
+| 노드 재조인 | 수동 reset → join | 30초 이내 자동 재조인 |
+| 장애 알림 | 직접 확인 전까지 모름 | 1분 이내 Slack 자동 알림 |
+| 배포 | kubectl 직접 실행 | Git Push → 자동 배포 |
+
+---
+
 ## ▍Quick Start
 ```bash
 ansible-playbook ~/ansible-k8s/install-platform.yml
