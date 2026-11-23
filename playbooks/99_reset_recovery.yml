@@ -71,8 +71,8 @@
     - name: Execute kubeadm join (operational fixed token)
       command: >
         kubeadm join 192.168.0.120:6443
-        --token bqlim3.5wvfkabr6neee03o
-        --discovery-token-ca-cert-hash sha256:caaf273f7120d84e8c2c801f189376f571bbf654b5da109ce485d43346ba0d3f
+        --token {{ kubeadm_join_token }}
+        --discovery-token-ca-cert-hash sha256:{{ kubeadm_ca_cert_hash }}
       become: yes
       when: not ansible_check_mode
 
