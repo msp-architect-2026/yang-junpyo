@@ -34,10 +34,10 @@
     creates: /usr/local/bin/argocd
 
 - name: Reset ArgoCD admin password
-  shell: kubectl -n argocd patch secret argocd-secret -p '{"stringData": {"admin.password": "$2a$10$rRyBsGSHK6.uc8fntPwVIuLVHgsAhAX7TcdrqW/RADU0uh7CaChLa", "admin.passwordMtime": "2026-01-01T00:00:00Z"}}'
+  shell: kubectl -n argocd patch secret argocd-secret -p '{"stringData": {"admin.password": "{{ argocd_admin_password_bcrypt }}", "admin.passwordMtime": "2026-01-01T00:00:00Z"}}'
 
 - name: Login to ArgoCD
-  shell: argocd login 192.168.0.120:30499 --username admin --password password --insecure
+  shell: argocd login 192.168.0.120:30499 --username admin --password {{ argocd_admin_password }} --insecure
   changed_when: false
 
 - name: Add GitLab repository to ArgoCD
