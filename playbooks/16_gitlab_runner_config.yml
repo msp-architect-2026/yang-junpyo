@@ -2,6 +2,6 @@
   become: yes
   vars:
     gitlab_ip: "192.168.0.112"
-    runner_token: "glrt-rXXNONpGH1dLgEWaU4GT8W86MQp0OjEKdToxCw.01.120jn5guf"
+    runner_token: "{{ gitlab_runner_token }}"
   roles:
     - gitlab-runner-config
